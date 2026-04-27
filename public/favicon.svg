@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Emmanuel Magallanes favicon">
+	<defs>
+		<linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0%" stop-color="#ff5a00" />
+			<stop offset="55%" stop-color="#ff0055" />
+			<stop offset="100%" stop-color="#00ffd5" />
+		</linearGradient>
+		<linearGradient id="ink" x1="0%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0%" stop-color="#081018" />
+			<stop offset="100%" stop-color="#020409" />
+		</linearGradient>
+	</defs>
+	<rect width="128" height="128" rx="28" fill="url(#ink)" />
+	<rect x="8" y="8" width="112" height="112" rx="22" fill="none" stroke="url(#bg)" stroke-width="6" />
+	<path d="M34 93V35h18l12 18 12-18h18v58H76V64L64 81 52 64v29H34Z" fill="#f7fbff" />
+	<circle cx="101" cy="27" r="8" fill="#00ffd5" />
+</svg>
