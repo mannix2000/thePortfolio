@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import "./App.css";
+
+type PageKey = "about" | "projects" | "certificates" | "references" | "contact";
 
 const skills = [
   "PHP & Laravel",
@@ -80,149 +82,58 @@ const references = [
   },
 ];
 
+const navigationItems: Array<{ key: PageKey; label: string }> = [
+  { key: "about", label: "About" },
+  { key: "projects", label: "Projects" },
+  { key: "certificates", label: "Certificates" },
+  { key: "references", label: "References" },
+  { key: "contact", label: "Contact" },
+];
+
+function isPageKey(value: string): value is PageKey {
+  return navigationItems.some((item) => item.key === value);
+}
+
+function getInitialPage(): PageKey {
+  if (typeof window === "undefined") {
+    return "about";
+  }
+
+  const hashPage = window.location.hash.replace("#", "");
+  return isPageKey(hashPage) ? hashPage : "about";
+}
+
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
+  const [activePage, setActivePage] = useState<PageKey>(getInitialPage);
 
-  return (
-    <div className={`app-shell ${isInitialized ? "is-active" : ""}`}>
-      <div className="atmosphere" aria-hidden="true">
-        <span className="orb orb-a"></span>
-        <span className="orb orb-b"></span>
-        <span className="orb orb-c"></span>
-        <span className="grid-fade"></span>
-      </div>
+  useEffect(() => {
+    const syncPageWithHash = () => {
+      const hashPage = window.location.hash.replace("#", "");
 
-      {!isInitialized ? (
-        <div className="intro-overlay">
-          <button
-            type="button"
-            className="profile-trigger"
-            onClick={() => setIsInitialized(true)}>
-            <span className="profile-ring"></span>
-            <img src="/media/profile.jpg" alt="Emmanuel Magallanes" />
-          </button>
-          <div className="intro-copy">
-            <p className="eyebrow">Click profile to initialize</p>
-            <h1>Emmanuel L. Magallanes</h1>
-            <p>
-              Freelance full-stack developer building responsive, practical web
-              systems for business and institutional work.
-            </p>
-          </div>
-        </div>
-      ) : null}
+      if (isPageKey(hashPage)) {
+        setActivePage(hashPage);
+      }
+    };
 
-      <header className="topbar">
-        <a className="brand" href="#home">
-          <span className="brand-mark">ELM</span>
-          <span className="brand-copy">
-            <strong>Emmanuel Magallanes</strong>
-            <small>Full-Stack Web Developer</small>
-          </span>
-        </a>
+    window.addEventListener("hashchange", syncPageWithHash);
+    return () => window.removeEventListener("hashchange", syncPageWithHash);
+  }, []);
 
-        <nav className="nav-links" aria-label="Section navigation">
-          <a href="#about">About</a>
-          <a href="#projects">Projects</a>
-          <a href="#certificates">Certificates</a>
-          <a href="#references">References</a>
-          <a href="#contact">Contact</a>
-        </nav>
-      </header>
+  const showPage = (page: PageKey) => {
+    setActivePage(page);
+    window.location.hash = page;
+  };
 
-      <main className="page" id="home">
-        <section className="hero-panel">
-          <div className="hero-copy">
-            <p className="eyebrow">Freelancer / Full-Stack Web Developer</p>
-            <h2>
-              I help clients launch high-performing web products with clear UX
-              and maintainable architecture.
-            </h2>
-            <p className="hero-text">
-              I work across PHP, Laravel, JavaScript, React, Node.js, WordPress,
-              Python, and database design to turn ideas into usable, scalable
-              digital products.
-            </p>
+  let pageContent: ReactNode;
 
-            <div className="hero-actions">
-              <a className="action-primary" href="#projects">
-                View Projects
-              </a>
-              <a
-                className="action-secondary"
-                href="/documents/Emmanuel-Magallanes-Resume.pdf"
-                download
-                target="_blank"
-                rel="noreferrer">
-                Download Resume
-              </a>
-              <a
-                className="action-secondary"
-                href="/documents/Emmanuel-Magallanes-Portfolio.pdf"
-                download
-                target="_blank"
-                rel="noreferrer">
-                Download PDF Portfolio
-              </a>
-            </div>
-
-            <div className="contact-grid">
-              <span>Email: magallanesmannix2000@mail.com</span>
-              <span>Phone: 09127878519</span>
-              <a
-                href="https://github.com/mannix2000"
-                target="_blank"
-                rel="noreferrer">
-                GitHub
-              </a>
-              <a
-                href="https://www.linkedin.com/in/emmanuel-magallanes-0918312a1/"
-                target="_blank"
-                rel="noreferrer">
-                LinkedIn
-              </a>
-            </div>
-          </div>
-
-          <div className="hero-visual">
-            <div className="portrait-frame">
-              <img src="/media/profile.jpg" alt="Emmanuel Magallanes" />
-            </div>
-            <div className="status-card">
-              <span>Status</span>
-              <strong>Available for freelance projects</strong>
-            </div>
-          </div>
-        </section>
-
-        <section className="content-grid">
-          <article className="panel panel-large" id="about">
-            <p className="section-kicker">About</p>
-            <h3>Delivery-first development with practical outcomes.</h3>
-            <p>
-              Emmanuel Magallanes focuses on responsive, user-friendly systems
-              that balance speed, clarity, and maintainability. The portfolio
-              spans parish, government, and utility-focused applications where
-              reliability matters more than novelty.
-            </p>
-          </article>
-
-          <article className="panel" id="skills">
-            <p className="section-kicker">Technical Skills</p>
-            <div className="skill-list">
-              {skills.map((skill) => (
-                <span className="skill-pill" key={skill}>
-                  {skill}
-                </span>
-              ))}
-            </div>
-          </article>
-        </section>
-
-        <section className="stack" id="projects">
+  switch (activePage) {
+    case "projects":
+      pageContent = (
+        <section className="stack" aria-labelledby="projects-title">
           <div className="section-heading">
             <p className="section-kicker">Projects</p>
-            <h3>Selected work</h3>
+            <h3 id="projects-title">Selected work</h3>
           </div>
           <div className="card-grid three-up">
             {projects.map((project) => (
@@ -236,11 +147,14 @@ function App() {
             ))}
           </div>
         </section>
-
-        <section className="stack" id="certificates">
+      );
+      break;
+    case "certificates":
+      pageContent = (
+        <section className="stack" aria-labelledby="certificates-title">
           <div className="section-heading">
             <p className="section-kicker">Certificates</p>
-            <h3>Training and credentials</h3>
+            <h3 id="certificates-title">Training and credentials</h3>
           </div>
           <div className="card-grid three-up">
             {certificates.map((certificate) => (
@@ -254,11 +168,14 @@ function App() {
             ))}
           </div>
         </section>
-
-        <section className="stack" id="references">
+      );
+      break;
+    case "references":
+      pageContent = (
+        <section className="stack" aria-labelledby="references-title">
           <div className="section-heading">
             <p className="section-kicker">References</p>
-            <h3>Professional contacts</h3>
+            <h3 id="references-title">Professional contacts</h3>
           </div>
           <div className="card-grid two-up">
             {references.map((reference) => (
@@ -271,14 +188,17 @@ function App() {
             ))}
           </div>
         </section>
-
-        <section className="contact-panel" id="contact">
+      );
+      break;
+    case "contact":
+      pageContent = (
+        <section className="contact-panel" aria-labelledby="contact-title">
           <div>
             <p className="section-kicker">Contact</p>
-            <h3>Let’s build something solid.</h3>
+            <h3 id="contact-title">Let’s build something solid.</h3>
             <p>
-              For freelance work, collaboration, or project discussions, reach
-              out directly.
+              For freelance work, company employment opportunities, team
+              projects, or project discussions, reach out directly.
             </p>
           </div>
           <div className="contact-actions">
@@ -306,6 +226,181 @@ function App() {
             </a>
           </div>
         </section>
+      );
+      break;
+    case "about":
+    default:
+      pageContent = (
+        <>
+          <section className="hero-panel" aria-labelledby="about-hero-title">
+            <div className="hero-copy">
+              <p className="eyebrow">
+                Full-Stack Web Developer / Freelance / Company / Team Projects
+              </p>
+              <h2 id="about-hero-title">
+                I help clients launch high-performing web products with clear UX
+                and maintainable architecture.
+              </h2>
+              <p className="hero-text">
+                I work across PHP, Laravel, JavaScript, React, Node.js,
+                WordPress, Python, and database design to turn ideas into
+                usable, scalable digital products.
+              </p>
+
+              <div className="hero-actions">
+                <button
+                  type="button"
+                  className="action-primary"
+                  onClick={() => showPage("projects")}>
+                  View Projects
+                </button>
+                <a
+                  className="action-secondary"
+                  href="/documents/Emmanuel-Magallanes-Resume.pdf"
+                  download
+                  target="_blank"
+                  rel="noreferrer">
+                  Download Resume
+                </a>
+                <a
+                  className="action-secondary"
+                  href="/documents/Emmanuel-Magallanes-Portfolio.pdf"
+                  download
+                  target="_blank"
+                  rel="noreferrer">
+                  Download PDF Portfolio
+                </a>
+              </div>
+
+              <div className="contact-grid">
+                <span>Email: magallanesmannix2000@mail.com</span>
+                <span>Phone: 09127878519</span>
+                <a
+                  href="https://github.com/mannix2000"
+                  target="_blank"
+                  rel="noreferrer">
+                  GitHub
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/emmanuel-magallanes-0918312a1/"
+                  target="_blank"
+                  rel="noreferrer">
+                  LinkedIn
+                </a>
+              </div>
+            </div>
+
+            <div className="hero-visual">
+              <div className="portrait-frame">
+                <img src="/media/profile.jpg" alt="Emmanuel Magallanes" />
+              </div>
+              <div className="status-card">
+                <span>Status</span>
+                <strong>
+                  Available for freelance, company, and team projects
+                </strong>
+              </div>
+            </div>
+          </section>
+
+          <section className="content-grid" aria-label="About details">
+            <article className="panel panel-large">
+              <p className="section-kicker">About</p>
+              <h3>Delivery-first development with practical outcomes.</h3>
+              <p>
+                Emmanuel Magallanes focuses on responsive, user-friendly systems
+                that balance speed, clarity, and maintainability. The portfolio
+                spans parish, government, and utility-focused applications where
+                reliability matters more than novelty.
+              </p>
+            </article>
+
+            <article className="panel">
+              <p className="section-kicker">Technical Skills</p>
+              <div className="skill-list">
+                {skills.map((skill) => (
+                  <span className="skill-pill" key={skill}>
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </article>
+          </section>
+        </>
+      );
+      break;
+  }
+
+  return (
+    <div className={`app-shell ${isInitialized ? "is-active" : ""}`}>
+      <div className="atmosphere" aria-hidden="true">
+        <span className="orb orb-a"></span>
+        <span className="orb orb-b"></span>
+        <span className="orb orb-c"></span>
+        <span className="hacker-scene">
+          <span className="hacker-monitor"></span>
+          <span className="hacker-code"></span>
+          <span className="hacker-figure">
+            <span className="hacker-hood"></span>
+            <span className="hacker-face"></span>
+            <span className="hacker-eye"></span>
+            <span className="hacker-body"></span>
+          </span>
+        </span>
+        <span className="grid-fade"></span>
+      </div>
+
+      {!isInitialized ? (
+        <div className="intro-overlay">
+          <button
+            type="button"
+            className="profile-trigger"
+            onClick={() => setIsInitialized(true)}>
+            <span className="profile-ring"></span>
+            <img src="/media/profile.jpg" alt="Emmanuel Magallanes" />
+          </button>
+          <div className="intro-copy">
+            <p className="eyebrow">Click profile to initialize</p>
+            <h1>Emmanuel L. Magallanes</h1>
+            <p>
+              Full-stack developer open to freelance work, company employment,
+              and team-based web projects for business and institutional work.
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      <header className="topbar">
+        <a
+          className="brand"
+          href="#about"
+          onClick={(event) => {
+            event.preventDefault();
+            showPage("about");
+          }}>
+          <span className="brand-mark">ELM</span>
+          <span className="brand-copy">
+            <strong>Emmanuel Magallanes</strong>
+            <small>Full-Stack Web Developer</small>
+          </span>
+        </a>
+
+        <nav className="nav-links" aria-label="Page navigation">
+          {navigationItems.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              className={activePage === item.key ? "is-current" : undefined}
+              aria-current={activePage === item.key ? "page" : undefined}
+              onClick={() => showPage(item.key)}>
+              {item.label}
+            </button>
+          ))}
+        </nav>
+      </header>
+
+      <main className="page" key={activePage}>
+        <div className="page-shell">{pageContent}</div>
       </main>
     </div>
   );
