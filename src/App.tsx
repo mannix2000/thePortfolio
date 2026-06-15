@@ -427,8 +427,8 @@ function App() {
                 Full-Stack Web Developer / Freelance / Company / Team Projects
               </p>
               <h2 id="about-hero-title">
-                I help clients launch high-performing web products with clear UX
-                and maintainable architecture.
+                I help clients launch high-performing web products with clear UX and maintainable architecture. I also offer free additional services on certain projects to help clients maximize their budget and achieve better outcomes.
+
               </h2>
               <p className="hero-text">
                 I work across PHP, Laravel, JavaScript, React, Node.js,
