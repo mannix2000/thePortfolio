@@ -9,6 +9,16 @@ npm install
 npm run dev
 ```
 
+To enable the contact form email delivery, create a `.env` file in `react-portfolio` with these values from your EmailJS account:
+
+```bash
+VITE_EMAILJS_SERVICE_ID=your_service_id
+VITE_EMAILJS_TEMPLATE_ID=your_template_id
+VITE_EMAILJS_PUBLIC_KEY=your_public_key
+```
+
+The contact form is set to send messages to `magallanesmannix2000@gmail.com`.
+
 ## Production Build
 
 ```bash

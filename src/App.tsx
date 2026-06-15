@@ -1,16 +1,47 @@
-import { useEffect, useState, type ReactNode } from "react";
+import emailjs from "@emailjs/browser";
+import {
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import "./App.css";
 
 type PageKey = "about" | "projects" | "certificates" | "references" | "contact";
 
-const skills = [
-  "PHP & Laravel",
-  "JavaScript",
-  "React.js",
-  "Node.js",
-  "HTML5 & CSS3",
-  "WordPress",
-  "Python",
+const skillGroups = [
+  {
+    title: "Core Skills",
+    skills: [
+      "Proficiency in C#",
+      "Git Version Control",
+      "Software Development Principles",
+      "Problem-Solving",
+      "Attention to Detail",
+      "Communication",
+      "Teamwork",
+      "Independent Collaboration",
+      "Adaptability",
+      "Fast Learning",
+    ],
+  },
+  {
+    title: "Preferred Skills",
+    skills: [
+      "C#",
+      "SQL Server",
+      "AWS",
+      "PostgreSQL",
+      "Microsoft Azure AI",
+      "TypeScript",
+      "Vue 3",
+      "Nuxt 3",
+      "Software Testing",
+      "Debugging",
+      "Agile Development",
+    ],
+  },
 ];
 
 const projects = [
@@ -90,6 +121,21 @@ const navigationItems: Array<{ key: PageKey; label: string }> = [
   { key: "contact", label: "Contact" },
 ];
 
+const contactEmail = "magallanesmannix2000@gmail.com";
+
+const emptyContactForm = {
+  name: "",
+  email: "",
+  subject: "",
+  message: "",
+};
+
+const emailJsConfig = {
+  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
+  templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+};
+
 function isPageKey(value: string): value is PageKey {
   return navigationItems.some((item) => item.key === value);
 }
@@ -106,6 +152,14 @@ function getInitialPage(): PageKey {
 function App() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [activePage, setActivePage] = useState<PageKey>(getInitialPage);
+  const [contactForm, setContactForm] = useState(emptyContactForm);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
+  const [contactFeedback, setContactFeedback] = useState<{
+    tone: "idle" | "success" | "error";
+    message: string;
+  }>({ tone: "idle", message: "" });
+
+  const isEmailJsConfigured = Object.values(emailJsConfig).every(Boolean);
 
   useEffect(() => {
     const syncPageWithHash = () => {
@@ -123,6 +177,66 @@ function App() {
   const showPage = (page: PageKey) => {
     setActivePage(page);
     window.location.hash = page;
+  };
+
+  const handleContactFieldChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = event.target;
+
+    setContactForm((currentForm) => ({
+      ...currentForm,
+      [name]: value,
+    }));
+  };
+
+  const handleContactSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!isEmailJsConfigured) {
+      setContactFeedback({
+        tone: "error",
+        message:
+          "Email delivery is not configured yet. Add the EmailJS environment variables before using this form.",
+      });
+      return;
+    }
+
+    setIsSendingMessage(true);
+    setContactFeedback({ tone: "idle", message: "" });
+
+    try {
+      await emailjs.send(
+        emailJsConfig.serviceId!,
+        emailJsConfig.templateId!,
+        {
+          to_email: contactEmail,
+          from_name: contactForm.name,
+          from_email: contactForm.email,
+          subject: contactForm.subject || "Portfolio inquiry",
+          message: contactForm.message,
+          reply_to: contactForm.email,
+        },
+        {
+          publicKey: emailJsConfig.publicKey!,
+        },
+      );
+
+      setContactForm(emptyContactForm);
+      setContactFeedback({
+        tone: "success",
+        message:
+          "Message sent successfully. I will receive it in my Gmail inbox.",
+      });
+    } catch {
+      setContactFeedback({
+        tone: "error",
+        message:
+          "Message could not be sent right now. Please try again or use the direct email link below.",
+      });
+    } finally {
+      setIsSendingMessage(false);
+    }
   };
 
   let pageContent: ReactNode;
@@ -193,38 +307,113 @@ function App() {
     case "contact":
       pageContent = (
         <section className="contact-panel" aria-labelledby="contact-title">
-          <div>
-            <p className="section-kicker">Contact</p>
-            <h3 id="contact-title">Let’s build something solid.</h3>
-            <p>
-              For freelance work, company employment opportunities, team
-              projects, or project discussions, reach out directly.
-            </p>
+          <div className="contact-copy">
+            <div>
+              <p className="section-kicker">Contact</p>
+              <h3 id="contact-title">Let’s build something solid.</h3>
+              <p>
+                For freelance work, company employment opportunities, team
+                projects, or project discussions, send a message here.
+              </p>
+              <p className="contact-note">
+                Messages from this form are delivered to {contactEmail}.
+              </p>
+            </div>
+
+            <div className="contact-actions">
+              <a href="/documents/Emmanuel-Magallanes-Resume.pdf" download>
+                Download resume PDF
+              </a>
+              <a href="/documents/Emmanuel-Magallanes-Portfolio.pdf" download>
+                Download portfolio PDF
+              </a>
+              <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+              <a href="tel:09127878519">09127878519</a>
+              <a
+                href="https://github.com/mannix2000"
+                target="_blank"
+                rel="noreferrer">
+                github.com/mannix2000
+              </a>
+              <a
+                href="https://www.facebook.com/in/emmanuel-magallanes-0918312a1/"
+                target="_blank"
+                rel="noreferrer">
+                Facebook profile
+              </a>
+            </div>
           </div>
-          <div className="contact-actions">
-            <a href="/documents/Emmanuel-Magallanes-Resume.pdf" download>
-              Download resume PDF
-            </a>
-            <a href="/documents/Emmanuel-Magallanes-Portfolio.pdf" download>
-              Download portfolio PDF
-            </a>
-            <a href="mailto:magallanesmannix2000@mail.com">
-              magallanesmannix2000@mail.com
-            </a>
-            <a href="tel:09127878519">09127878519</a>
-            <a
-              href="https://github.com/mannix2000"
-              target="_blank"
-              rel="noreferrer">
-              github.com/mannix2000
-            </a>
-            <a
-              href="https://www.facebook.com/in/emmanuel-magallanes-0918312a1/"
-              target="_blank"
-              rel="noreferrer">
-              Facebook profile
-            </a>
-          </div>
+
+          <form className="contact-form" onSubmit={handleContactSubmit}>
+            <label className="field-group">
+              <span>Name</span>
+              <input
+                type="text"
+                name="name"
+                value={contactForm.name}
+                onChange={handleContactFieldChange}
+                placeholder="Your name"
+                autoComplete="name"
+                required
+              />
+            </label>
+
+            <label className="field-group">
+              <span>Email</span>
+              <input
+                type="email"
+                name="email"
+                value={contactForm.email}
+                onChange={handleContactFieldChange}
+                placeholder="your@email.com"
+                autoComplete="email"
+                required
+              />
+            </label>
+
+            <label className="field-group">
+              <span>Subject</span>
+              <input
+                type="text"
+                name="subject"
+                value={contactForm.subject}
+                onChange={handleContactFieldChange}
+                placeholder="Project inquiry"
+              />
+            </label>
+
+            <label className="field-group field-group-full">
+              <span>Message</span>
+              <textarea
+                name="message"
+                value={contactForm.message}
+                onChange={handleContactFieldChange}
+                placeholder="Tell me about your project, role, or collaboration idea."
+                rows={6}
+                required
+              />
+            </label>
+
+            <div className="contact-form-footer">
+              <button
+                type="submit"
+                className="action-primary contact-submit"
+                disabled={isSendingMessage}>
+                {isSendingMessage ? "Sending..." : "Send message"}
+              </button>
+              <p className="contact-form-hint">
+                {isEmailJsConfigured
+                  ? "Replies will be sent to your Gmail inbox."
+                  : "Set the EmailJS environment variables to activate email delivery."}
+              </p>
+            </div>
+
+            {contactFeedback.message ? (
+              <p className={`contact-feedback is-${contactFeedback.tone}`}>
+                {contactFeedback.message}
+              </p>
+            ) : null}
+          </form>
         </section>
       );
       break;
@@ -273,7 +462,7 @@ function App() {
               </div>
 
               <div className="contact-grid">
-                <span>Email: magallanesmannix2000@mail.com</span>
+                <span>Email: {contactEmail}</span>
                 <span>Phone: 09127878519</span>
                 <a
                   href="https://github.com/mannix2000"
@@ -316,12 +505,33 @@ function App() {
             </article>
 
             <article className="panel">
+              <p className="section-kicker">Agricultural Experience</p>
+              <h3>Hands-on farming and livestock management</h3>
+              <p>
+                In addition to IT expertise, my family’s main source of income
+                is agriculture. We raise pigs, cows, and chickens, and cultivate
+                a variety of vegetables. This hands-on experience in farming and
+                livestock management has taught me the value of hard work,
+                responsibility, and sustainable practices—skills that complement
+                my technical background and shape my approach to problem-solving
+                and teamwork.
+              </p>
+            </article>
+
+            <article className="panel">
               <p className="section-kicker">Technical Skills</p>
-              <div className="skill-list">
-                {skills.map((skill) => (
-                  <span className="skill-pill" key={skill}>
-                    {skill}
-                  </span>
+              <div className="skill-groups">
+                {skillGroups.map((group) => (
+                  <section className="skill-group" key={group.title}>
+                    <h4>{group.title}</h4>
+                    <div className="skill-list">
+                      {group.skills.map((skill) => (
+                        <span className="skill-pill" key={skill}>
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </section>
                 ))}
               </div>
             </article>
