@@ -1,151 +1,15 @@
 import emailjs from "@emailjs/browser";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import Admin from "./Admin";
+import { defaultContent, mergeContent, type Content } from "./content";
+import { CONTENT_ROW_ID, CONTENT_TABLE, supabase } from "./supabase";
 import "./App.css";
-
-const skillGroups = [
-  {
-    title: "AI Engineering & LLM Systems",
-    skills: [
-      "LLM orchestration using LangChain & LangGraph",
-      "Prompt engineering: zero-shot, one-shot, few-shot, Chain-of-Thought reasoning",
-      "Retrieval-Augmented Generation (RAG): document ingestion, chunking, embedding pipelines, context scoring & reranking",
-      "Vector databases & semantic search: embeddings, similarity search, hybrid retrieval, metadata filtering",
-      "AI agent workflows: multi-step agents, tool usage, LangGraph orchestration vs traditional chains",
-      "Model Context Protocol (MCP): connecting LLMs to external APIs, services, and local tools",
-      "LLM deployment: Claude, OpenAI, Gemini, Ollama, Gemma, local open-source models",
-    ],
-  },
-  {
-    title: "Software Engineering",
-    skills: [
-      "Flutter, FlutterFlow, React, Python, Golang, Node.js, Laravel, WordPress, PHP",
-      "REST & GraphQL API architecture",
-      "Android & iOS deployment pipelines",
-      "CI/CD: Codemagic, GitHub, GitLab, Vercel, Docker",
-    ],
-  },
-  {
-    title: "Backend & Databases",
-    skills: [
-      "Firebase, Supabase, MySQL, SQLite, AWS",
-      "Serverless and cloud integrations",
-      "Authentication, payments, real-time systems",
-    ],
-  },
-  {
-    title: "Automation & IoT",
-    skills: [
-      "n8n workflow automation, Make, Zapier",
-      "Arduino, ESP32, sensor integrations",
-      "AI-driven internal tools & business automation",
-    ],
-  },
-  {
-    title: "Core Skills",
-    skills: [
-      "Proficiency in C#",
-      "Git Version Control",
-      "Software Development Principles",
-      "Problem-Solving",
-      "Attention to Detail",
-      "Communication",
-      "Teamwork",
-      "Independent Collaboration",
-      "Adaptability",
-      "Fast Learning",
-    ],
-  },
-  {
-    title: "Preferred Skills",
-    skills: [
-      "C#",
-      "SQL Server",
-      "AWS",
-      "PostgreSQL",
-      "Microsoft Azure AI",
-      "TypeScript",
-      "Vue 3",
-      "Nuxt 3",
-      "Software Testing",
-      "Debugging",
-      "Agile Development",
-    ],
-  },
-];
-
-const projects = [
-  {
-    title: "BAANG Parish System",
-    description:
-      "Centralized web application for parish management and digitization.",
-    image: "/media/baang_parish_system.png",
-  },
-  {
-    title: "DICT Info System",
-    description:
-      "Data management and project tracking platform for DICT operations.",
-    image: "/media/dict_information_system.png",
-  },
-  {
-    title: "MorelinX App",
-    description:
-      "Mobile app for electricity reading, inspection, and billing workflows.",
-    image: "/media/morelinx.jpg",
-  },
-];
-
-const certificates = [
-  {
-    title: "Computer Hardware",
-    description:
-      "Certification in computer hardware servicing and maintenance.",
-    image: "/media/computer_hardware.png",
-  },
-  {
-    title: "Cyber Threat Management",
-    description:
-      "Training in identifying and mitigating digital security threats.",
-    image: "/media/cyber_threat_management.png",
-  },
-  {
-    title: "Data Analytics",
-    description:
-      "Certification in data processing, analysis, and visualization techniques.",
-    image: "/media/data_analytics.png",
-  },
-];
-
-const references = [
-  {
-    name: "Julio Lopez",
-    role: "Contractor / Developer / CEO",
-    email: "juliolopez241997@gmail.com",
-    phone: "+63 907-512-1814",
-  },
-  {
-    name: "Benjie Lenteria",
-    role: "Professor / Supervisor / Co-Developer",
-    email: "hawkmanlentrix@gmail.com",
-    phone: "+63 917-303-5716",
-  },
-  {
-    name: "Jay Mar Masibay",
-    role: "Instructor / Project Officer / Trainor",
-    email: "jaymarmasibay@gmail.com",
-    phone: "+63 9278635200",
-  },
-  {
-    name: "Jeffry Abaniel",
-    role: "Senior Flutter Developer",
-    email: "JeffryAbaniel@gmail.com",
-    phone: "+63 09482845780",
-  },
-];
 
 const navigationItems = [
   { href: "#about", label: "About" },
   { href: "#skills", label: "Skills" },
   { href: "#projects", label: "Projects" },
+  { href: "#experience", label: "Experience" },
   { href: "#certificates", label: "Certificates" },
   { href: "#references", label: "References" },
   { href: "#contact", label: "Contact" },
@@ -170,27 +34,6 @@ const highlights = [
   },
 ];
 
-const techStack = [
-  "PHP",
-  "Laravel",
-  "JavaScript",
-  "React",
-  "Node.js",
-  "WordPress",
-  "Python",
-  "C#",
-  "SQL Server",
-  "PostgreSQL",
-  "AWS",
-  "Git",
-];
-
-const stats = [
-  { value: "3+", label: "Featured projects" },
-  { value: "3", label: "Certificates" },
-  { value: "10+", label: "Technologies" },
-];
-
 const contactEmail = "magallanesmannix2000@gmail.com";
 
 const emptyContactForm = {
@@ -207,6 +50,9 @@ const emailJsConfig = {
 };
 
 function App() {
+  const [content, setContent] = useState<Content>(defaultContent);
+  const [adminOpen, setAdminOpen] = useState(false);
+  const footerClicks = useRef({ count: 0, last: 0 });
   const [contactForm, setContactForm] = useState(emptyContactForm);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [contactFeedback, setContactFeedback] = useState<{
@@ -215,6 +61,40 @@ function App() {
   }>({ tone: "idle", message: "" });
 
   const isEmailJsConfigured = Object.values(emailJsConfig).every(Boolean);
+
+  const { hero, about, skillGroups, experience, projects, certificates } =
+    content;
+  const { references, techStack } = content;
+
+  const stats = [
+    { value: String(projects.length), label: "Featured projects" },
+    { value: String(certificates.length), label: "Certificates" },
+    { value: String(techStack.length), label: "Technologies" },
+  ];
+
+  useEffect(() => {
+    if (!supabase) return;
+    supabase
+      .from(CONTENT_TABLE)
+      .select("data")
+      .eq("id", CONTENT_ROW_ID)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.data) setContent(mergeContent(data.data as Partial<Content>));
+      });
+  }, []);
+
+  // Hidden entry: click the copyright text 5 times quickly.
+  const handleSecretClick = () => {
+    const now = Date.now();
+    const state = footerClicks.current;
+    state.count = now - state.last < 1500 ? state.count + 1 : 1;
+    state.last = now;
+    if (state.count >= 5) {
+      state.count = 0;
+      setAdminOpen(true);
+    }
+  };
 
   const handleContactFieldChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -286,7 +166,11 @@ function App() {
           </a>
 
           <nav className="nav-links" aria-label="Primary">
-            {navigationItems.map((item) => (
+            {navigationItems
+              .filter(
+                (item) => item.href !== "#experience" || experience.length > 0,
+              )
+              .map((item) => (
               <a key={item.href} href={item.href}>
                 {item.label}
               </a>
@@ -310,18 +194,13 @@ function App() {
       <main id="top">
         <section className="container hero">
           <div className="hero-copy">
-            <p className="greeting">Hi, I'm Emmanuel 👋</p>
+            <p className="greeting">{hero.greeting}</p>
             <h1>
-              Full-stack web developer.
+              {hero.headlineTop}
               <br />
-              <span className="accent">Let's build together.</span>
+              <span className="accent">{hero.headlineAccent}</span>
             </h1>
-            <p className="lead">
-              I help clients launch high-performing web products with clear UX
-              and maintainable architecture, working across PHP, Laravel,
-              JavaScript, React, Node.js, WordPress, Python, and database
-              design.
-            </p>
+            <p className="lead">{hero.lead}</p>
             <div className="btn-row">
               <a className="btn btn-primary" href="#contact">
                 Start a Project
@@ -344,7 +223,7 @@ function App() {
                 alt="Emmanuel Magallanes"
               />
               <p className="profile-name">Emmanuel L. Magallanes</p>
-              <p className="profile-role">Full-Stack Web Developer</p>
+              <p className="profile-role">Full-Stack Web &amp; Application Developer</p>
               <a className="btn btn-primary btn-block" href="#contact">
                 Send a Message
               </a>
@@ -384,19 +263,13 @@ function App() {
                 A developer who turns <span className="accent">ideas</span>{" "}
                 into shipped products.
               </h2>
-              <p className="body-text">
-                Emmanuel Magallanes focuses on responsive, user-friendly
-                systems that balance speed, clarity, and maintainability. The
-                portfolio spans parish, government, and utility-focused
-                applications where reliability matters more than novelty.
-              </p>
-              <p className="body-text">
-                Beyond IT, my family's main source of income is agriculture. We
-                raise pigs, cows, and chickens, and cultivate a variety of
-                vegetables. That hands-on experience taught me hard work,
-                responsibility, and sustainable practices, which shape my
-                approach to problem-solving and teamwork.
-              </p>
+              {about
+                .filter((paragraph) => paragraph.trim())
+                .map((paragraph, index) => (
+                  <p className="body-text" key={index}>
+                    {paragraph}
+                  </p>
+                ))}
               <div className="stats">
                 {stats.map((stat) => (
                   <div key={stat.label}>
@@ -433,6 +306,32 @@ function App() {
             </div>
           </div>
         </section>
+
+        {experience.length > 0 ? (
+          <section id="experience" className="container section">
+            <p className="kicker">Experience</p>
+            <h2>Where I've worked.</h2>
+            <ol className="timeline">
+              {experience.map((job, index) => (
+                <li key={`${job.company}-${index}`}>
+                  <span className="timeline-dot"></span>
+                  <p className="timeline-period">{job.period}</p>
+                  <h3>
+                    {job.role} · {job.company}
+                  </h3>
+                  {job.tech ? <p className="timeline-tech">{job.tech}</p> : null}
+                  <ul className="timeline-list">
+                    {job.highlights
+                      .filter((item) => item.trim())
+                      .map((item, i) => (
+                        <li key={i}>{item}</li>
+                      ))}
+                  </ul>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ) : null}
 
         <section id="projects" className="container section">
           <p className="kicker">Selected Projects</p>
@@ -628,13 +527,21 @@ function App() {
 
       <footer className="footer">
         <div className="container footer-inner">
-          <p>
+          <p onClick={handleSecretClick}>
             © {new Date().getFullYear()} Emmanuel Magallanes. All rights
             reserved.
           </p>
           <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
         </div>
       </footer>
+
+      {adminOpen ? (
+        <Admin
+          content={content}
+          onChange={setContent}
+          onClose={() => setAdminOpen(false)}
+        />
+      ) : null}
     </div>
   );
 }
