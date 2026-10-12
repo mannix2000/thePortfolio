@@ -4,6 +4,43 @@ import "./App.css";
 
 const skillGroups = [
   {
+    title: "AI Engineering & LLM Systems",
+    skills: [
+      "LLM orchestration using LangChain & LangGraph",
+      "Prompt engineering: zero-shot, one-shot, few-shot, Chain-of-Thought reasoning",
+      "Retrieval-Augmented Generation (RAG): document ingestion, chunking, embedding pipelines, context scoring & reranking",
+      "Vector databases & semantic search: embeddings, similarity search, hybrid retrieval, metadata filtering",
+      "AI agent workflows: multi-step agents, tool usage, LangGraph orchestration vs traditional chains",
+      "Model Context Protocol (MCP): connecting LLMs to external APIs, services, and local tools",
+      "LLM deployment: Claude, OpenAI, Gemini, Ollama, Gemma, local open-source models",
+    ],
+  },
+  {
+    title: "Software Engineering",
+    skills: [
+      "Flutter, FlutterFlow, React, Python, Golang, Node.js, Laravel, WordPress, PHP",
+      "REST & GraphQL API architecture",
+      "Android & iOS deployment pipelines",
+      "CI/CD: Codemagic, GitHub, GitLab, Vercel, Docker",
+    ],
+  },
+  {
+    title: "Backend & Databases",
+    skills: [
+      "Firebase, Supabase, MySQL, SQLite, AWS",
+      "Serverless and cloud integrations",
+      "Authentication, payments, real-time systems",
+    ],
+  },
+  {
+    title: "Automation & IoT",
+    skills: [
+      "n8n workflow automation, Make, Zapier",
+      "Arduino, ESP32, sensor integrations",
+      "AI-driven internal tools & business automation",
+    ],
+  },
+  {
     title: "Core Skills",
     skills: [
       "Proficiency in C#",
@@ -376,7 +413,7 @@ function App() {
           <div className="container">
             <p className="kicker">What I Do</p>
             <h2>
-              Turning requirements into{" "}
+              Turning AI ideas into{" "}
               <span className="accent">real systems.</span>
             </h2>
             <div className="grid grid-2">
