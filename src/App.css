@@ -901,3 +901,27 @@ h2 {
   font-size: 0.875rem;
   color: var(--slate-500);
 }
+
+.nav-links a.is-current {
+  color: var(--blue-600);
+  font-weight: 600;
+}
+
+.nav-links a:not(.is-current) {
+  padding-bottom: 0;
+}
+
+main {
+  animation: page-in 0.25s ease;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

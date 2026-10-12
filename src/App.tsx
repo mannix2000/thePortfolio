@@ -5,15 +5,29 @@ import { defaultContent, mergeContent, type Content } from "./content";
 import { CONTENT_ROW_ID, CONTENT_TABLE, supabase } from "./supabase";
 import "./App.css";
 
-const navigationItems = [
-  { href: "#about", label: "About" },
-  { href: "#skills", label: "Skills" },
-  { href: "#projects", label: "Projects" },
-  { href: "#experience", label: "Experience" },
-  { href: "#certificates", label: "Certificates" },
-  { href: "#references", label: "References" },
-  { href: "#contact", label: "Contact" },
+type PageKey =
+  | "home"
+  | "about"
+  | "projects"
+  | "certificates"
+  | "references"
+  | "contact";
+
+const navigationItems: Array<{ key: PageKey; label: string }> = [
+  { key: "home", label: "Home" },
+  { key: "about", label: "About" },
+  { key: "projects", label: "Projects" },
+  { key: "certificates", label: "Certificates" },
+  { key: "references", label: "References" },
+  { key: "contact", label: "Contact" },
 ];
+
+function getPageFromHash(): PageKey {
+  const hash = window.location.hash.replace("#", "");
+  return navigationItems.some((item) => item.key === hash)
+    ? (hash as PageKey)
+    : "home";
+}
 
 const highlights = [
   {
@@ -51,7 +65,17 @@ const emailJsConfig = {
 
 function App() {
   const [content, setContent] = useState<Content>(defaultContent);
+  const [page, setPage] = useState<PageKey>(getPageFromHash);
   const [adminOpen, setAdminOpen] = useState(false);
+
+  useEffect(() => {
+    const syncPage = () => {
+      setPage(getPageFromHash());
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener("hashchange", syncPage);
+    return () => window.removeEventListener("hashchange", syncPage);
+  }, []);
   const footerClicks = useRef({ count: 0, last: 0 });
   const [contactForm, setContactForm] = useState(emptyContactForm);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
@@ -160,18 +184,18 @@ function App() {
     <div className="site">
       <header className="topbar">
         <div className="container topbar-inner">
-          <a className="brand" href="#top">
+          <a className="brand" href="#home">
             <span className="brand-mark">EM</span>
             <span className="brand-name">Emmanuel Magallanes</span>
           </a>
 
           <nav className="nav-links" aria-label="Primary">
-            {navigationItems
-              .filter(
-                (item) => item.href !== "#experience" || experience.length > 0,
-              )
-              .map((item) => (
-              <a key={item.href} href={item.href}>
+            {navigationItems.map((item) => (
+              <a
+                key={item.key}
+                href={`#${item.key}`}
+                className={page === item.key ? "is-current" : undefined}
+                aria-current={page === item.key ? "page" : undefined}>
                 {item.label}
               </a>
             ))}
@@ -191,7 +215,8 @@ function App() {
         </div>
       </header>
 
-      <main id="top">
+      <main id="top" key={page}>
+        {page === "home" ? (<>
         <section className="container hero">
           <div className="hero-copy">
             <p className="greeting">{hero.greeting}</p>
@@ -250,6 +275,30 @@ function App() {
           </div>
         </section>
 
+        <section className="cta">
+          <div className="container cta-inner">
+            <div>
+              <p className="cta-title">Let's build something amazing together.</p>
+              <p className="cta-sub">
+                Freelance work, company roles, or team projects.
+              </p>
+            </div>
+            <div className="btn-row">
+              <a className="btn btn-white" href="#contact">
+                Send Message
+              </a>
+              <a
+                className="btn btn-ghost"
+                href="/documents/Emmanuel-Magallanes-Portfolio.pdf"
+                download>
+                Portfolio PDF
+              </a>
+            </div>
+          </div>
+        </section>
+        </>) : null}
+
+        {page === "about" ? (<>
         <section id="about" className="container section">
           <div className="about-grid">
             <img
@@ -333,6 +382,20 @@ function App() {
           </section>
         ) : null}
 
+        <section className="container section tight">
+          <p className="kicker">Tech I Use</p>
+          <h2>Full-stack delivery, end to end.</h2>
+          <div className="pills">
+            {techStack.map((tech) => (
+              <span className="pill" key={tech}>
+                {tech}
+              </span>
+            ))}
+          </div>
+        </section>
+        </>) : null}
+
+        {page === "projects" ? (<>
         <section id="projects" className="container section">
           <p className="kicker">Selected Projects</p>
           <h2>Recent work worth a look.</h2>
@@ -349,18 +412,9 @@ function App() {
           </div>
         </section>
 
-        <section className="container section tight">
-          <p className="kicker">Tech I Use</p>
-          <h2>Full-stack delivery, end to end.</h2>
-          <div className="pills">
-            {techStack.map((tech) => (
-              <span className="pill" key={tech}>
-                {tech}
-              </span>
-            ))}
-          </div>
-        </section>
+        </>) : null}
 
+        {page === "certificates" ? (<>
         <section id="certificates" className="band">
           <div className="container">
             <p className="kicker">Certificates</p>
@@ -379,6 +433,9 @@ function App() {
           </div>
         </section>
 
+        </>) : null}
+
+        {page === "references" ? (<>
         <section id="references" className="container section">
           <p className="kicker">References</p>
           <h2>Professional contacts.</h2>
@@ -394,28 +451,9 @@ function App() {
           </div>
         </section>
 
-        <section className="cta">
-          <div className="container cta-inner">
-            <div>
-              <p className="cta-title">Let's build something amazing together.</p>
-              <p className="cta-sub">
-                Freelance work, company roles, or team projects.
-              </p>
-            </div>
-            <div className="btn-row">
-              <a className="btn btn-white" href="#contact">
-                Send Message
-              </a>
-              <a
-                className="btn btn-ghost"
-                href="/documents/Emmanuel-Magallanes-Portfolio.pdf"
-                download>
-                Portfolio PDF
-              </a>
-            </div>
-          </div>
-        </section>
+        </>) : null}
 
+        {page === "contact" ? (<>
         <section id="contact" className="container section">
           <div className="contact-grid">
             <div>
@@ -523,6 +561,7 @@ function App() {
             </form>
           </div>
         </section>
+        </>) : null}
       </main>
 
       <footer className="footer">
