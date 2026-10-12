@@ -1,14 +1,6 @@
 import emailjs from "@emailjs/browser";
-import {
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-  type ReactNode,
-} from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import "./App.css";
-
-type PageKey = "about" | "projects" | "certificates" | "references" | "contact";
 
 const skillGroups = [
   {
@@ -113,12 +105,53 @@ const references = [
   },
 ];
 
-const navigationItems: Array<{ key: PageKey; label: string }> = [
-  { key: "about", label: "About" },
-  { key: "projects", label: "Projects" },
-  { key: "certificates", label: "Certificates" },
-  { key: "references", label: "References" },
-  { key: "contact", label: "Contact" },
+const navigationItems = [
+  { href: "#about", label: "About" },
+  { href: "#skills", label: "Skills" },
+  { href: "#projects", label: "Projects" },
+  { href: "#certificates", label: "Certificates" },
+  { href: "#references", label: "References" },
+  { href: "#contact", label: "Contact" },
+];
+
+const highlights = [
+  {
+    title: "Available for work",
+    description: "Open to freelance, company, and team projects.",
+  },
+  {
+    title: "Full-stack delivery",
+    description: "From database design to polished, responsive UI.",
+  },
+  {
+    title: "Clear communication",
+    description: "Practical updates and maintainable code.",
+  },
+  {
+    title: "Reliable outcomes",
+    description: "Parish, government, and utility systems that last.",
+  },
+];
+
+const techStack = [
+  "PHP",
+  "Laravel",
+  "JavaScript",
+  "React",
+  "Node.js",
+  "WordPress",
+  "Python",
+  "C#",
+  "SQL Server",
+  "PostgreSQL",
+  "AWS",
+  "Git",
+];
+
+const stats = [
+  { value: "3+", label: "Featured projects" },
+  { value: "3", label: "Certificates" },
+  { value: "10+", label: "Technologies" },
 ];
 
 const contactEmail = "magallanesmannix2000@gmail.com";
@@ -136,22 +169,7 @@ const emailJsConfig = {
   publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
 };
 
-function isPageKey(value: string): value is PageKey {
-  return navigationItems.some((item) => item.key === value);
-}
-
-function getInitialPage(): PageKey {
-  if (typeof window === "undefined") {
-    return "about";
-  }
-
-  const hashPage = window.location.hash.replace("#", "");
-  return isPageKey(hashPage) ? hashPage : "about";
-}
-
 function App() {
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [activePage, setActivePage] = useState<PageKey>(getInitialPage);
   const [contactForm, setContactForm] = useState(emptyContactForm);
   const [isSendingMessage, setIsSendingMessage] = useState(false);
   const [contactFeedback, setContactFeedback] = useState<{
@@ -160,24 +178,6 @@ function App() {
   }>({ tone: "idle", message: "" });
 
   const isEmailJsConfigured = Object.values(emailJsConfig).every(Boolean);
-
-  useEffect(() => {
-    const syncPageWithHash = () => {
-      const hashPage = window.location.hash.replace("#", "");
-
-      if (isPageKey(hashPage)) {
-        setActivePage(hashPage);
-      }
-    };
-
-    window.addEventListener("hashchange", syncPageWithHash);
-    return () => window.removeEventListener("hashchange", syncPageWithHash);
-  }, []);
-
-  const showPage = (page: PageKey) => {
-    setActivePage(page);
-    window.location.hash = page;
-  };
 
   const handleContactFieldChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -232,386 +232,372 @@ function App() {
       setContactFeedback({
         tone: "error",
         message:
-          "Message could not be sent right now. Please try again or use the direct email link below.",
+          "Message could not be sent right now. Please try again or use the direct email link.",
       });
     } finally {
       setIsSendingMessage(false);
     }
   };
 
-  let pageContent: ReactNode;
+  return (
+    <div className="site">
+      <header className="topbar">
+        <div className="container topbar-inner">
+          <a className="brand" href="#top">
+            <span className="brand-mark">EM</span>
+            <span className="brand-name">Emmanuel Magallanes</span>
+          </a>
 
-  switch (activePage) {
-    case "projects":
-      pageContent = (
-        <section className="stack" aria-labelledby="projects-title">
-          <div className="section-heading">
-            <p className="section-kicker">Projects</p>
-            <h3 id="projects-title">Selected work</h3>
+          <nav className="nav-links" aria-label="Primary">
+            {navigationItems.map((item) => (
+              <a key={item.href} href={item.href}>
+                {item.label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="topbar-actions">
+            <a
+              className="btn btn-outline btn-sm hide-sm"
+              href="/documents/Emmanuel-Magallanes-Resume.pdf"
+              download>
+              Resume
+            </a>
+            <a className="btn btn-primary btn-sm" href="#contact">
+              Hire Me
+            </a>
           </div>
-          <div className="card-grid three-up">
+        </div>
+      </header>
+
+      <main id="top">
+        <section className="container hero">
+          <div className="hero-copy">
+            <p className="greeting">Hi, I'm Emmanuel 👋</p>
+            <h1>
+              Full-stack web developer.
+              <br />
+              <span className="accent">Let's build together.</span>
+            </h1>
+            <p className="lead">
+              I help clients launch high-performing web products with clear UX
+              and maintainable architecture, working across PHP, Laravel,
+              JavaScript, React, Node.js, WordPress, Python, and database
+              design.
+            </p>
+            <div className="btn-row">
+              <a className="btn btn-primary" href="#contact">
+                Start a Project
+              </a>
+              <a className="btn btn-outline" href="#projects">
+                View My Work →
+              </a>
+            </div>
+          </div>
+
+          <div className="hero-visual">
+            <div className="profile-card">
+              <span className="status-badge">
+                <span className="dot"></span>
+                Available for work
+              </span>
+              <img
+                className="avatar"
+                src="/media/profile.jpg"
+                alt="Emmanuel Magallanes"
+              />
+              <p className="profile-name">Emmanuel L. Magallanes</p>
+              <p className="profile-role">Full-Stack Web Developer</p>
+              <a className="btn btn-primary btn-block" href="#contact">
+                Send a Message
+              </a>
+              <p className="profile-meta">
+                Freelance · Company · Team projects
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="container strip-wrap">
+          <div className="strip">
+            {highlights.map((item) => (
+              <div className="strip-item" key={item.title}>
+                <span className="strip-icon" aria-hidden="true">
+                  ✦
+                </span>
+                <div>
+                  <p className="strip-title">{item.title}</p>
+                  <p className="strip-text">{item.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="about" className="container section">
+          <div className="about-grid">
+            <img
+              className="about-image"
+              src="/media/profile.jpg"
+              alt="Emmanuel Magallanes"
+            />
+            <div>
+              <p className="kicker">About Me</p>
+              <h2>
+                A developer who turns <span className="accent">ideas</span>{" "}
+                into shipped products.
+              </h2>
+              <p className="body-text">
+                Emmanuel Magallanes focuses on responsive, user-friendly
+                systems that balance speed, clarity, and maintainability. The
+                portfolio spans parish, government, and utility-focused
+                applications where reliability matters more than novelty.
+              </p>
+              <p className="body-text">
+                Beyond IT, my family's main source of income is agriculture. We
+                raise pigs, cows, and chickens, and cultivate a variety of
+                vegetables. That hands-on experience taught me hard work,
+                responsibility, and sustainable practices, which shape my
+                approach to problem-solving and teamwork.
+              </p>
+              <div className="stats">
+                {stats.map((stat) => (
+                  <div key={stat.label}>
+                    <p className="stat-value">{stat.value}</p>
+                    <p className="stat-label">{stat.label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="skills" className="band">
+          <div className="container">
+            <p className="kicker">What I Do</p>
+            <h2>
+              Turning requirements into{" "}
+              <span className="accent">real systems.</span>
+            </h2>
+            <div className="grid grid-2">
+              {skillGroups.map((group) => (
+                <div className="card" key={group.title}>
+                  <h3>{group.title}</h3>
+                  <ul className="bullet-list">
+                    {group.skills.map((skill) => (
+                      <li key={skill}>
+                        <span className="bullet"></span>
+                        {skill}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="projects" className="container section">
+          <p className="kicker">Selected Projects</p>
+          <h2>Recent work worth a look.</h2>
+          <div className="grid grid-3">
             {projects.map((project) => (
-              <article className="media-card" key={project.title}>
+              <article className="card card-media" key={project.title}>
                 <img src={project.image} alt={project.title} />
-                <div className="media-copy">
-                  <h4>{project.title}</h4>
+                <div className="card-body">
+                  <h3>{project.title}</h3>
                   <p>{project.description}</p>
                 </div>
               </article>
             ))}
           </div>
         </section>
-      );
-      break;
-    case "certificates":
-      pageContent = (
-        <section className="stack" aria-labelledby="certificates-title">
-          <div className="section-heading">
-            <p className="section-kicker">Certificates</p>
-            <h3 id="certificates-title">Training and credentials</h3>
-          </div>
-          <div className="card-grid three-up">
-            {certificates.map((certificate) => (
-              <article className="media-card" key={certificate.title}>
-                <img src={certificate.image} alt={certificate.title} />
-                <div className="media-copy">
-                  <h4>{certificate.title}</h4>
-                  <p>{certificate.description}</p>
-                </div>
-              </article>
+
+        <section className="container section tight">
+          <p className="kicker">Tech I Use</p>
+          <h2>Full-stack delivery, end to end.</h2>
+          <div className="pills">
+            {techStack.map((tech) => (
+              <span className="pill" key={tech}>
+                {tech}
+              </span>
             ))}
           </div>
         </section>
-      );
-      break;
-    case "references":
-      pageContent = (
-        <section className="stack" aria-labelledby="references-title">
-          <div className="section-heading">
-            <p className="section-kicker">References</p>
-            <h3 id="references-title">Professional contacts</h3>
+
+        <section id="certificates" className="band">
+          <div className="container">
+            <p className="kicker">Certificates</p>
+            <h2>Training and credentials.</h2>
+            <div className="grid grid-3">
+              {certificates.map((certificate) => (
+                <article className="card card-media" key={certificate.title}>
+                  <img src={certificate.image} alt={certificate.title} />
+                  <div className="card-body">
+                    <h3>{certificate.title}</h3>
+                    <p>{certificate.description}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
           </div>
-          <div className="card-grid two-up">
+        </section>
+
+        <section id="references" className="container section">
+          <p className="kicker">References</p>
+          <h2>Professional contacts.</h2>
+          <div className="grid grid-2">
             {references.map((reference) => (
-              <article className="reference-card" key={reference.name}>
-                <h4>{reference.name}</h4>
-                <p className="reference-role">{reference.role}</p>
-                <p>{reference.email}</p>
-                <p>{reference.phone}</p>
+              <article className="card" key={reference.name}>
+                <h3>{reference.name}</h3>
+                <p className="ref-role">{reference.role}</p>
+                <p className="ref-line">{reference.email}</p>
+                <p className="ref-line">{reference.phone}</p>
               </article>
             ))}
           </div>
         </section>
-      );
-      break;
-    case "contact":
-      pageContent = (
-        <section className="contact-panel" aria-labelledby="contact-title">
-          <div className="contact-copy">
+
+        <section className="cta">
+          <div className="container cta-inner">
             <div>
-              <p className="section-kicker">Contact</p>
-              <h3 id="contact-title">Let’s build something solid.</h3>
-              <p>
-                For freelance work, company employment opportunities, team
-                projects, or project discussions, send a message here.
-              </p>
-              <p className="contact-note">
-                Messages from this form are delivered to {contactEmail}.
+              <p className="cta-title">Let's build something amazing together.</p>
+              <p className="cta-sub">
+                Freelance work, company roles, or team projects.
               </p>
             </div>
-
-            <div className="contact-actions">
-              <a href="/documents/Emmanuel-Magallanes-Resume.pdf" download>
-                Download resume PDF
-              </a>
-              <a href="/documents/Emmanuel-Magallanes-Portfolio.pdf" download>
-                Download portfolio PDF
-              </a>
-              <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
-              <a href="tel:09127878519">09127878519</a>
-              <a
-                href="https://github.com/mannix2000"
-                target="_blank"
-                rel="noreferrer">
-                github.com/mannix2000
+            <div className="btn-row">
+              <a className="btn btn-white" href="#contact">
+                Send Message
               </a>
               <a
-                href="https://www.facebook.com/in/emmanuel-magallanes-0918312a1/"
-                target="_blank"
-                rel="noreferrer">
-                Facebook profile
+                className="btn btn-ghost"
+                href="/documents/Emmanuel-Magallanes-Portfolio.pdf"
+                download>
+                Portfolio PDF
               </a>
             </div>
           </div>
+        </section>
 
-          <form className="contact-form" onSubmit={handleContactSubmit}>
-            <label className="field-group">
-              <span>Name</span>
-              <input
-                type="text"
-                name="name"
-                value={contactForm.name}
-                onChange={handleContactFieldChange}
-                placeholder="Your name"
-                autoComplete="name"
-                required
-              />
-            </label>
+        <section id="contact" className="container section">
+          <div className="contact-grid">
+            <div>
+              <p className="kicker">Contact</p>
+              <h2>Let's build something solid.</h2>
+              <p className="body-text">
+                For freelance work, company employment opportunities, team
+                projects, or project discussions, send a message here. Messages
+                are delivered to {contactEmail}.
+              </p>
+              <ul className="contact-links">
+                <li>
+                  <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+                </li>
+                <li>
+                  <a href="tel:09127878519">09127878519</a>
+                </li>
+                <li>
+                  <a
+                    href="https://github.com/mannix2000"
+                    target="_blank"
+                    rel="noreferrer">
+                    github.com/mannix2000
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://www.linkedin.com/in/emmanuel-magallanes-0918312a1/"
+                    target="_blank"
+                    rel="noreferrer">
+                    LinkedIn
+                  </a>
+                </li>
+                <li>
+                  <a href="/documents/Emmanuel-Magallanes-Resume.pdf" download>
+                    Download resume PDF
+                  </a>
+                </li>
+              </ul>
+            </div>
 
-            <label className="field-group">
-              <span>Email</span>
-              <input
-                type="email"
-                name="email"
-                value={contactForm.email}
-                onChange={handleContactFieldChange}
-                placeholder="your@email.com"
-                autoComplete="email"
-                required
-              />
-            </label>
-
-            <label className="field-group">
-              <span>Subject</span>
-              <input
-                type="text"
-                name="subject"
-                value={contactForm.subject}
-                onChange={handleContactFieldChange}
-                placeholder="Project inquiry"
-              />
-            </label>
-
-            <label className="field-group field-group-full">
-              <span>Message</span>
-              <textarea
-                name="message"
-                value={contactForm.message}
-                onChange={handleContactFieldChange}
-                placeholder="Tell me about your project, role, or collaboration idea."
-                rows={6}
-                required
-              />
-            </label>
-
-            <div className="contact-form-footer">
+            <form className="card contact-form" onSubmit={handleContactSubmit}>
+              <label className="field">
+                <span>Name</span>
+                <input
+                  type="text"
+                  name="name"
+                  value={contactForm.name}
+                  onChange={handleContactFieldChange}
+                  placeholder="Your name"
+                  autoComplete="name"
+                  required
+                />
+              </label>
+              <label className="field">
+                <span>Email</span>
+                <input
+                  type="email"
+                  name="email"
+                  value={contactForm.email}
+                  onChange={handleContactFieldChange}
+                  placeholder="your@email.com"
+                  autoComplete="email"
+                  required
+                />
+              </label>
+              <label className="field">
+                <span>Subject</span>
+                <input
+                  type="text"
+                  name="subject"
+                  value={contactForm.subject}
+                  onChange={handleContactFieldChange}
+                  placeholder="Project inquiry"
+                />
+              </label>
+              <label className="field">
+                <span>Message</span>
+                <textarea
+                  name="message"
+                  value={contactForm.message}
+                  onChange={handleContactFieldChange}
+                  placeholder="Tell me about your project, role, or collaboration idea."
+                  rows={5}
+                  required
+                />
+              </label>
               <button
                 type="submit"
-                className="action-primary contact-submit"
+                className="btn btn-primary"
                 disabled={isSendingMessage}>
                 {isSendingMessage ? "Sending..." : "Send message"}
               </button>
-              <p className="contact-form-hint">
-                {isEmailJsConfigured
-                  ? "Replies will be sent to your Gmail inbox."
-                  : "Set the EmailJS environment variables to activate email delivery."}
-              </p>
-            </div>
-
-            {contactFeedback.message ? (
-              <p className={`contact-feedback is-${contactFeedback.tone}`}>
-                {contactFeedback.message}
-              </p>
-            ) : null}
-          </form>
-        </section>
-      );
-      break;
-    case "about":
-    default:
-      pageContent = (
-        <>
-          <section className="hero-panel" aria-labelledby="about-hero-title">
-            <div className="hero-copy">
-              <p className="eyebrow">
-                Full-Stack Web Developer / Freelance / Company / Team Projects
-              </p>
-              <h2 id="about-hero-title">
-                I help clients launch high-performing web products with clear UX and maintainable architecture. I also offer free additional services on certain projects to help clients maximize their budget and achieve better outcomes.
-
-              </h2>
-              <p className="hero-text">
-                I work across PHP, Laravel, JavaScript, React, Node.js,
-                WordPress, Python, and database design to turn ideas into
-                usable, scalable digital products.
-              </p>
-
-              <div className="hero-actions">
-                <button
-                  type="button"
-                  className="action-primary"
-                  onClick={() => showPage("projects")}>
-                  View Projects
-                </button>
-                <a
-                  className="action-secondary"
-                  href="/documents/Emmanuel-Magallanes-Resume.pdf"
-                  download
-                  target="_blank"
-                  rel="noreferrer">
-                  Download Resume
-                </a>
-                <a
-                  className="action-secondary"
-                  href="/documents/Emmanuel-Magallanes-Portfolio.pdf"
-                  download
-                  target="_blank"
-                  rel="noreferrer">
-                  Download PDF Portfolio
-                </a>
-              </div>
-
-              <div className="contact-grid">
-                <span>Email: {contactEmail}</span>
-                <span>Phone: 09127878519</span>
-                <a
-                  href="https://github.com/mannix2000"
-                  target="_blank"
-                  rel="noreferrer">
-                  GitHub
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/emmanuel-magallanes-0918312a1/"
-                  target="_blank"
-                  rel="noreferrer">
-                  LinkedIn
-                </a>
-              </div>
-            </div>
-
-            <div className="hero-visual">
-              <div className="portrait-frame">
-                <img src="/media/profile.jpg" alt="Emmanuel Magallanes" />
-              </div>
-              <div className="status-card">
-                <span>Status</span>
-                <strong>
-                  Available for freelance, company, and team projects
-                </strong>
-              </div>
-            </div>
-          </section>
-
-          <section className="content-grid" aria-label="About details">
-            <article className="panel panel-large">
-              <p className="section-kicker">About</p>
-              <h3>Delivery-first development with practical outcomes.</h3>
-              <p>
-                Emmanuel Magallanes focuses on responsive, user-friendly systems
-                that balance speed, clarity, and maintainability. The portfolio
-                spans parish, government, and utility-focused applications where
-                reliability matters more than novelty.
-              </p>
-            </article>
-
-            <article className="panel">
-              <p className="section-kicker">Agricultural Experience</p>
-              <h3>Hands-on farming and livestock management</h3>
-              <p>
-                In addition to IT expertise, my family’s main source of income
-                is agriculture. We raise pigs, cows, and chickens, and cultivate
-                a variety of vegetables. This hands-on experience in farming and
-                livestock management has taught me the value of hard work,
-                responsibility, and sustainable practices—skills that complement
-                my technical background and shape my approach to problem-solving
-                and teamwork.
-              </p>
-            </article>
-
-            <article className="panel">
-              <p className="section-kicker">Technical Skills</p>
-              <div className="skill-groups">
-                {skillGroups.map((group) => (
-                  <section className="skill-group" key={group.title}>
-                    <h4>{group.title}</h4>
-                    <div className="skill-list">
-                      {group.skills.map((skill) => (
-                        <span className="skill-pill" key={skill}>
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </section>
-                ))}
-              </div>
-            </article>
-          </section>
-        </>
-      );
-      break;
-  }
-
-  return (
-    <div className={`app-shell ${isInitialized ? "is-active" : ""}`}>
-      <div className="atmosphere" aria-hidden="true">
-        <span className="orb orb-a"></span>
-        <span className="orb orb-b"></span>
-        <span className="orb orb-c"></span>
-        <span className="hacker-scene">
-          <span className="hacker-monitor"></span>
-          <span className="hacker-code"></span>
-          <span className="hacker-figure">
-            <span className="hacker-hood"></span>
-            <span className="hacker-face"></span>
-            <span className="hacker-eye"></span>
-            <span className="hacker-body"></span>
-          </span>
-        </span>
-        <span className="grid-fade"></span>
-      </div>
-
-      {!isInitialized ? (
-        <div className="intro-overlay">
-          <button
-            type="button"
-            className="profile-trigger"
-            onClick={() => setIsInitialized(true)}>
-            <span className="profile-ring"></span>
-            <img src="/media/profile.jpg" alt="Emmanuel Magallanes" />
-          </button>
-          <div className="intro-copy">
-            <p className="eyebrow">Click profile to initialize</p>
-            <h1>Emmanuel L. Magallanes</h1>
-            <p>
-              Full-stack developer open to freelance work, company employment,
-              and team-based web projects for business and institutional work.
-            </p>
+              {!isEmailJsConfigured ? (
+                <p className="form-hint">
+                  Set the EmailJS environment variables to activate email
+                  delivery.
+                </p>
+              ) : null}
+              {contactFeedback.message ? (
+                <p className={`form-feedback is-${contactFeedback.tone}`}>
+                  {contactFeedback.message}
+                </p>
+              ) : null}
+            </form>
           </div>
-        </div>
-      ) : null}
-
-      <header className="topbar">
-        <a
-          className="brand"
-          href="#about"
-          onClick={(event) => {
-            event.preventDefault();
-            showPage("about");
-          }}>
-          <span className="brand-mark">ELM</span>
-          <span className="brand-copy">
-            <strong>Emmanuel Magallanes</strong>
-            <small>Full-Stack Web Developer</small>
-          </span>
-        </a>
-
-        <nav className="nav-links" aria-label="Page navigation">
-          {navigationItems.map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              className={activePage === item.key ? "is-current" : undefined}
-              aria-current={activePage === item.key ? "page" : undefined}
-              onClick={() => showPage(item.key)}>
-              {item.label}
-            </button>
-          ))}
-        </nav>
-      </header>
-
-      <main className="page" key={activePage}>
-        <div className="page-shell">{pageContent}</div>
+        </section>
       </main>
+
+      <footer className="footer">
+        <div className="container footer-inner">
+          <p>
+            © {new Date().getFullYear()} Emmanuel Magallanes. All rights
+            reserved.
+          </p>
+          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+        </div>
+      </footer>
     </div>
   );
 }
