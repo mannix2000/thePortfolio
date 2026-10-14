@@ -57,6 +57,9 @@ const emptyContactForm = {
   message: "",
 };
 
+// Public by design: Web3Forms keys only allow sending to the owner's inbox.
+const web3FormsAccessKey = "b317c219-232c-4de8-96aa-3c9c12b3199e";
+
 const emailJsConfig = {
   serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID,
   templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
@@ -134,34 +137,49 @@ function App() {
   const handleContactSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!isEmailJsConfigured) {
-      setContactFeedback({
-        tone: "error",
-        message:
-          "Email delivery is not configured yet. Add the EmailJS environment variables before using this form.",
-      });
-      return;
-    }
-
     setIsSendingMessage(true);
     setContactFeedback({ tone: "idle", message: "" });
 
     try {
-      await emailjs.send(
-        emailJsConfig.serviceId!,
-        emailJsConfig.templateId!,
-        {
-          to_email: contactEmail,
-          from_name: contactForm.name,
-          from_email: contactForm.email,
-          subject: contactForm.subject || "Portfolio inquiry",
-          message: contactForm.message,
-          reply_to: contactForm.email,
-        },
-        {
-          publicKey: emailJsConfig.publicKey!,
-        },
-      );
+      if (isEmailJsConfigured) {
+        await emailjs.send(
+          emailJsConfig.serviceId!,
+          emailJsConfig.templateId!,
+          {
+            to_email: contactEmail,
+            from_name: contactForm.name,
+            from_email: contactForm.email,
+            subject: contactForm.subject || "Portfolio inquiry",
+            message: contactForm.message,
+            reply_to: contactForm.email,
+          },
+          {
+            publicKey: emailJsConfig.publicKey!,
+          },
+        );
+      } else {
+        // Web3Forms forwards the message to the Gmail tied to this access key.
+        const response = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            access_key: web3FormsAccessKey,
+            subject: `New portfolio message: ${contactForm.subject || "Portfolio inquiry"}`,
+            from_name: "Emmanuel Magallanes Portfolio",
+            replyto: contactForm.email,
+            name: contactForm.name,
+            email: contactForm.email,
+            message: contactForm.message,
+          }),
+        });
+        const result = await response.json().catch(() => null);
+        if (!response.ok || String(result?.success) !== "true") {
+          throw new Error(result?.message ?? "Send failed");
+        }
+      }
 
       setContactForm(emptyContactForm);
       setContactFeedback({
@@ -169,12 +187,15 @@ function App() {
         message:
           "Message sent successfully. I will receive it in my Gmail inbox.",
       });
-    } catch {
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : "";
       setContactFeedback({
         tone: "error",
-        message:
-          "Message could not be sent right now. Please try again or use the direct email link.",
+        message: /activat/i.test(reason)
+          ? "The contact form is waiting for activation. Please use the direct email link for now."
+          : "Message could not be sent right now. Please try again or use the direct email link.",
       });
+      console.error("Contact form error:", reason);
     } finally {
       setIsSendingMessage(false);
     }
@@ -547,12 +568,6 @@ function App() {
                 disabled={isSendingMessage}>
                 {isSendingMessage ? "Sending..." : "Send message"}
               </button>
-              {!isEmailJsConfigured ? (
-                <p className="form-hint">
-                  Set the EmailJS environment variables to activate email
-                  delivery.
-                </p>
-              ) : null}
               {contactFeedback.message ? (
                 <p className={`form-feedback is-${contactFeedback.tone}`}>
                   {contactFeedback.message}
