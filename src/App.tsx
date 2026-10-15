@@ -49,6 +49,34 @@ const highlights = [
 ];
 
 const contactEmail = "magallanesmannix2000@gmail.com";
+const phoneDisplay = "0910 849 9571";
+const phoneHref = "tel:+639108499571";
+const messengerHref = "https://m.me/magallanes.emmanuel.7";
+const facebookHref = "https://www.facebook.com/magallanes.emmanuel.7/";
+
+function MessengerIcon() {
+  return (
+    <svg
+      className="phone-icon"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true">
+      <path d="M12 2C6.36 2 2 6.13 2 11.7c0 2.91 1.19 5.44 3.14 7.17.16.15.26.35.27.57l.05 1.78a.8.8 0 001.12.71l1.98-.87a.8.8 0 01.53-.04c.91.25 1.88.38 2.91.38 5.64 0 10-4.13 10-9.7S17.64 2 12 2zm6 7.46l-2.94 4.66a1.5 1.5 0 01-2.17.4l-2.34-1.75a.6.6 0 00-.72 0l-3.16 2.4c-.42.32-.97-.18-.69-.63l2.94-4.66a1.5 1.5 0 012.17-.4l2.34 1.75a.6.6 0 00.72 0l3.16-2.4c.42-.32.97.18.69.63z" />
+    </svg>
+  );
+}
+
+function PhoneIcon() {
+  return (
+    <svg
+      className="phone-icon"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true">
+      <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.02-.24 11.36 11.36 0 003.57.57 1 1 0 011 1V20a1 1 0 01-1 1C10.61 21 3 13.39 3 4a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 00.57 3.57 1 1 0 01-.25 1.02l-2.2 2.2z" />
+    </svg>
+  );
+}
 
 const emptyContactForm = {
   name: "",
@@ -229,6 +257,10 @@ function App() {
               download>
               Resume
             </a>
+            <a className="btn btn-outline btn-sm" href={phoneHref}>
+              <PhoneIcon />
+              <span className="hide-sm">Call Me</span>
+            </a>
             <a className="btn btn-primary btn-sm" href="#contact">
               Hire Me
             </a>
@@ -270,7 +302,19 @@ function App() {
               />
               <p className="profile-name">Emmanuel L. Magallanes</p>
               <p className="profile-role">Full-Stack Web &amp; Application Developer</p>
-              <a className="btn btn-primary btn-block" href="#contact">
+              <a className="btn btn-primary btn-block" href={phoneHref}>
+                <PhoneIcon />
+                Tap to Call
+              </a>
+              <a
+                className="btn btn-messenger btn-block mt-2"
+                href={messengerHref}
+                target="_blank"
+                rel="noreferrer">
+                <MessengerIcon />
+                Chat or Call on Messenger
+              </a>
+              <a className="btn btn-outline btn-block mt-2" href="#contact">
                 Send a Message
               </a>
               <p className="profile-meta">
@@ -490,7 +534,17 @@ function App() {
                   <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
                 </li>
                 <li>
-                  <a href="tel:09127878519">09127878519</a>
+                  <a href={phoneHref}>Call {phoneDisplay}</a>
+                </li>
+                <li>
+                  <a href={messengerHref} target="_blank" rel="noreferrer">
+                    Chat or call on Messenger
+                  </a>
+                </li>
+                <li>
+                  <a href={facebookHref} target="_blank" rel="noreferrer">
+                    Facebook profile
+                  </a>
                 </li>
                 <li>
                   <a
@@ -588,6 +642,20 @@ function App() {
           <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
         </div>
       </footer>
+
+      <div className="fab-stack">
+        <a
+          className="call-fab is-messenger"
+          href={messengerHref}
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Chat or call on Messenger">
+          <MessengerIcon />
+        </a>
+        <a className="call-fab" href={phoneHref} aria-label={`Call ${phoneDisplay}`}>
+          <PhoneIcon />
+        </a>
+      </div>
 
       {adminOpen ? (
         <Admin
