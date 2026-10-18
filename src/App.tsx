@@ -106,10 +106,12 @@ function App() {
   const [content, setContent] = useState<Content>(defaultContent);
   const [page, setPage] = useState<PageKey>(getPageFromHash);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const syncPage = () => {
       setPage(getPageFromHash());
+      setMenuOpen(false);
       window.scrollTo(0, 0);
     };
     window.addEventListener("hashchange", syncPage);
@@ -253,13 +255,17 @@ function App() {
             <span className="brand-name">Emmanuel Magallanes</span>
           </a>
 
-          <nav className="nav-links" aria-label="Primary">
+          <nav
+            id="primary-nav"
+            className={`nav-links ${menuOpen ? "is-open" : ""}`}
+            aria-label="Primary">
             {navigationItems.map((item) => (
               <a
                 key={item.key}
                 href={`#${item.key}`}
                 className={page === item.key ? "is-current" : undefined}
-                aria-current={page === item.key ? "page" : undefined}>
+                aria-current={page === item.key ? "page" : undefined}
+                onClick={() => setMenuOpen(false)}>
                 {item.label}
               </a>
             ))}
@@ -279,6 +285,17 @@ function App() {
             <a className="btn btn-primary btn-sm" href="#contact">
               Hire Me
             </a>
+            <button
+              type="button"
+              className={`menu-toggle ${menuOpen ? "is-open" : ""}`}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              aria-controls="primary-nav"
+              onClick={() => setMenuOpen((open) => !open)}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
           </div>
         </div>
       </header>
