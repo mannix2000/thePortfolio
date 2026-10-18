@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import type { Session } from "@supabase/supabase-js";
-import type { Content } from "./content";
+import { defaultContent, type Content } from "./content";
 import { CONTENT_ROW_ID, CONTENT_TABLE, supabase } from "./supabase";
 
 type FieldType = "text" | "textarea" | "lines";
@@ -21,6 +21,7 @@ const sections: Array<{
   { id: "about", label: "About" },
   { id: "skillGroups", label: "Skills" },
   { id: "experience", label: "Experience" },
+  { id: "education", label: "Education" },
   { id: "projects", label: "Projects" },
   { id: "certificates", label: "Certificates" },
   { id: "references", label: "References" },
@@ -29,6 +30,7 @@ const sections: Array<{
 
 const mediaFields: Field[] = [
   { key: "title", label: "Title", type: "text" },
+  { key: "tech", label: "Tech / subtitle (optional)", type: "text" },
   { key: "description", label: "Description", type: "textarea" },
   {
     key: "image",
@@ -152,7 +154,7 @@ function ListEditor<T extends Record<string, unknown>>({
 
 function Admin({ content, onChange, onClose }: Props) {
   const [session, setSession] = useState<Session | null>(null);
-  const [checking, setChecking] = useState(true);
+  const [checking, setChecking] = useState(Boolean(supabase));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
@@ -164,10 +166,7 @@ function Admin({ content, onChange, onClose }: Props) {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (!supabase) {
-      setChecking(false);
-      return;
-    }
+    if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setChecking(false);
@@ -303,12 +302,27 @@ function Admin({ content, onChange, onClose }: Props) {
         />
       );
       break;
+    case "education":
+      body = (
+        <ListEditor
+          items={content.education}
+          titleKey="degree"
+          blank={{ degree: "", school: "", period: "" }}
+          fields={[
+            { key: "degree", label: "Degree / course", type: "text" },
+            { key: "school", label: "School", type: "text" },
+            { key: "period", label: "Period", type: "text", hint: "e.g. 2021 – 2024" },
+          ]}
+          onChange={(items) => set("education", items)}
+        />
+      );
+      break;
     case "projects":
       body = (
         <ListEditor
           items={content.projects}
           titleKey="title"
-          blank={{ title: "", description: "", image: "" }}
+          blank={{ title: "", tech: "", description: "", image: "" }}
           fields={mediaFields}
           onChange={(items) => set("projects", items)}
         />
@@ -319,7 +333,7 @@ function Admin({ content, onChange, onClose }: Props) {
         <ListEditor
           items={content.certificates}
           titleKey="title"
-          blank={{ title: "", description: "", image: "" }}
+          blank={{ title: "", tech: "", description: "", image: "" }}
           fields={mediaFields}
           onChange={(items) => set("certificates", items)}
         />
@@ -336,6 +350,7 @@ function Admin({ content, onChange, onClose }: Props) {
             { key: "role", label: "Role", type: "text" },
             { key: "email", label: "Email", type: "text" },
             { key: "phone", label: "Phone", type: "text" },
+            { key: "link", label: "Website (optional)", type: "text" },
           ]}
           onChange={(items) => set("references", items)}
         />
@@ -409,6 +424,20 @@ function Admin({ content, onChange, onClose }: Props) {
               <span className={`adm-status is-${saveState.tone}`}>
                 {saveState.message || "Changes show on the page behind. Save to publish."}
               </span>
+              <button
+                type="button"
+                className="adm-btn"
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      "Replace everything in the editor with the resume content built into the site? Click Save & publish afterwards to make it live.",
+                    )
+                  ) {
+                    onChange(structuredClone(defaultContent));
+                  }
+                }}>
+                Reset to resume
+              </button>
               <button type="button" className="adm-btn" onClick={handleLogout}>
                 Log out
               </button>

@@ -48,13 +48,13 @@ section[id] {
 }
 
 .btn-primary {
-  background: var(--blue-600);
+  background: var(--brand-600);
   color: #fff;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.1);
 }
 
 .btn-primary:hover {
-  background: var(--blue-700);
+  background: var(--brand-700);
 }
 
 .btn-primary:disabled {
@@ -74,11 +74,11 @@ section[id] {
 
 .btn-white {
   background: #fff;
-  color: var(--blue-700);
+  color: var(--brand-700);
 }
 
 .btn-white:hover {
-  background: var(--blue-50);
+  background: var(--brand-50);
 }
 
 .btn-ghost {
@@ -87,7 +87,7 @@ section[id] {
 }
 
 .btn-ghost:hover {
-  background: var(--blue-500);
+  background: var(--brand-500);
 }
 
 .btn-row {
@@ -128,7 +128,7 @@ section[id] {
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 0.5rem;
-  background: var(--blue-600);
+  background: var(--brand-600);
   color: #fff;
   font-size: 0.875rem;
   font-weight: 700;
@@ -171,7 +171,7 @@ section[id] {
 
 .greeting {
   margin-bottom: 0.75rem;
-  color: var(--blue-600);
+  color: var(--brand-600);
 }
 
 .hero h1 {
@@ -181,7 +181,7 @@ section[id] {
 }
 
 .accent {
-  color: var(--blue-600);
+  color: var(--brand-600);
 }
 
 .lead {
@@ -232,7 +232,7 @@ section[id] {
   margin: 0 auto 1rem;
   border-radius: 50%;
   object-fit: cover;
-  box-shadow: 0 0 0 4px var(--blue-50);
+  box-shadow: 0 0 0 4px var(--brand-50);
 }
 
 .profile-name {
@@ -281,8 +281,8 @@ section[id] {
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
-  background: var(--blue-50);
-  color: var(--blue-600);
+  background: var(--brand-50);
+  color: var(--brand-600);
 }
 
 .strip-title {
@@ -315,7 +315,7 @@ section[id] {
   font-weight: 600;
   letter-spacing: 0.025em;
   text-transform: uppercase;
-  color: var(--blue-600);
+  color: var(--brand-600);
 }
 
 h2 {
@@ -434,7 +434,7 @@ h2 {
   height: 0.375rem;
   margin-top: 0.5rem;
   border-radius: 50%;
-  background: var(--blue-500);
+  background: var(--brand-500);
 }
 
 .pills {
@@ -456,7 +456,7 @@ h2 {
 
 .ref-role {
   margin-bottom: 0.75rem;
-  color: var(--blue-600) !important;
+  color: var(--brand-600) !important;
 }
 
 .ref-line {
@@ -465,7 +465,7 @@ h2 {
 
 /* CTA band */
 .cta {
-  background: var(--blue-600);
+  background: var(--brand-600);
 }
 
 .cta-inner {
@@ -486,7 +486,7 @@ h2 {
 }
 
 .cta-sub {
-  color: var(--blue-100);
+  color: var(--brand-100);
 }
 
 /* Contact */
@@ -508,7 +508,7 @@ h2 {
 }
 
 .contact-links a {
-  color: var(--blue-600);
+  color: var(--brand-600);
 }
 
 .contact-links a:hover {
@@ -548,8 +548,8 @@ h2 {
 
 .field input:focus,
 .field textarea:focus {
-  outline: 2px solid var(--blue-100);
-  border-color: var(--blue-500);
+  outline: 2px solid var(--brand-100);
+  border-color: var(--brand-500);
 }
 
 .form-hint {
@@ -671,7 +671,7 @@ h2 {
   height: 0.75rem;
   border: 2px solid #fff;
   border-radius: 50%;
-  background: var(--blue-600);
+  background: var(--brand-600);
 }
 
 .timeline-period {
@@ -796,8 +796,8 @@ h2 {
 }
 
 .adm-tabs button.is-active {
-  border-color: var(--blue-600);
-  background: var(--blue-600);
+  border-color: var(--brand-600);
+  background: var(--brand-600);
   color: #fff;
 }
 
@@ -888,8 +888,8 @@ h2 {
 }
 
 .adm-btn.primary {
-  border-color: var(--blue-600);
-  background: var(--blue-600);
+  border-color: var(--brand-600);
+  background: var(--brand-600);
   color: #fff;
 }
 
@@ -903,7 +903,7 @@ h2 {
 }
 
 .nav-links a.is-current {
-  color: var(--blue-600);
+  color: var(--brand-600);
   font-weight: 600;
 }
 
@@ -981,4 +981,19 @@ main {
   .fab-stack {
     display: none;
   }
+}
+
+.card-tech {
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem !important;
+  font-weight: 600;
+  color: var(--brand-600) !important;
+}
+
+.ref-link {
+  color: var(--brand-600);
+}
+
+.ref-link:hover {
+  text-decoration: underline;
 }

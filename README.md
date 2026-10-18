@@ -30,7 +30,6 @@ npm run preview
 
 - `public/media/` contains the bundled local images used by the site.
 - `public/documents/Emmanuel-Magallanes-Resume.pdf` is the resume download.
-- `public/documents/Emmanuel-Magallanes-Portfolio.pdf` is the one-page portfolio PDF.
 
 ## Deployment
 

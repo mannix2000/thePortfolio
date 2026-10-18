@@ -1,9 +1,12 @@
 :root {
-  --blue-50: #eff6ff;
-  --blue-100: #dbeafe;
-  --blue-500: #3b82f6;
-  --blue-600: #2563eb;
-  --blue-700: #1d4ed8;
+  --brand-50: #f0fdfa;
+  --brand-100: #ccfbf1;
+  --brand-500: #14b8a6;
+  --brand-600: #0d9488;
+  --brand-700: #0f766e;
+  --violet-500: #8b5cf6;
+  --violet-600: #7c3aed;
+  --gradient: linear-gradient(120deg, #0d9488 0%, #14b8a6 35%, #8b5cf6 100%);
   --slate-50: #f8fafc;
   --slate-100: #f1f5f9;
   --slate-200: #e2e8f0;
@@ -20,6 +23,7 @@
   --red-600: #dc2626;
 
   font-family: "Inter", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
   line-height: 1.5;
   color: var(--slate-900);
   background: #fff;

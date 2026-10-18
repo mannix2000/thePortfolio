@@ -10,7 +10,7 @@ This project is ready for either Netlify or Vercel.
    `VITE_EMAILJS_SERVICE_ID`, `VITE_EMAILJS_TEMPLATE_ID`, and `VITE_EMAILJS_PUBLIC_KEY`.
 4. In EmailJS, make sure your template accepts `from_name`, `from_email`, `subject`, `message`, `reply_to`, and `to_email`.
 5. Run `npm run build` and confirm the build completes successfully.
-6. Check that `public/media/` and `public/documents/` contain the images, resume, and portfolio PDF.
+6. Check that `public/media/` and `public/documents/` contain the images and resume.
 
 ## Netlify
 
@@ -39,7 +39,7 @@ This project is ready for either Netlify or Vercel.
 8. Confirm the output directory is `dist`.
 9. Deploy the project.
 10. After deploy, verify the same runtime checks:
-    intro overlay, images, resume download, portfolio PDF download, and contact form email delivery.
+    intro overlay, images, resume download, and contact form email delivery.
 
 `vercel.json` is already included for SPA routing.
 
@@ -47,6 +47,5 @@ This project is ready for either Netlify or Vercel.
 
 1. Test the site on desktop and mobile widths.
 2. Click `Download Resume` and confirm `Emmanuel-Magallanes-Resume.pdf` downloads.
-3. Click `Download PDF Portfolio` and confirm `Emmanuel-Magallanes-Portfolio.pdf` downloads.
 4. Submit the contact form and confirm the message arrives at `magallanesmannix2000@gmail.com`.
 5. Open browser dev tools and confirm there are no missing asset requests.

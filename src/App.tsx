@@ -2,8 +2,11 @@ import emailjs from "@emailjs/browser";
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import Admin from "./Admin";
 import { defaultContent, mergeContent, type Content } from "./content";
+import { Counter, RotatingText } from "./motion";
+import { useMotion } from "./useMotion";
 import { CONTENT_ROW_ID, CONTENT_TABLE, supabase } from "./supabase";
 import "./App.css";
+import "./motion.css";
 
 type PageKey =
   | "home"
@@ -49,6 +52,11 @@ const highlights = [
 ];
 
 const contactEmail = "magallanesmannix2000@gmail.com";
+const heroRoles = [
+  "web-based systems.",
+  "desktop systems.",
+  "mobile applications.",
+];
 const phoneDisplay = "0910 849 9571";
 const phoneHref = "tel:+639108499571";
 const messengerHref = "https://m.me/magallanes.emmanuel.7";
@@ -119,12 +127,13 @@ function App() {
 
   const { hero, about, skillGroups, experience, projects, certificates } =
     content;
-  const { references, techStack } = content;
+  const { references, techStack, education } = content;
+  const { scrolled, progress } = useMotion([page, content]);
 
   const stats = [
-    { value: String(projects.length), label: "Featured projects" },
-    { value: String(certificates.length), label: "Certificates" },
-    { value: String(techStack.length), label: "Technologies" },
+    { value: "4", label: "Years IT experience" },
+    { value: "2", label: "Years web development" },
+    { value: String(projects.length), label: "Selected projects" },
   ];
 
   useEffect(() => {
@@ -231,10 +240,16 @@ function App() {
 
   return (
     <div className="site">
-      <header className="topbar">
+      <div
+        className="scroll-progress"
+        style={{ transform: `scaleX(${progress})` }}
+        aria-hidden="true"></div>
+      <header className={`topbar ${scrolled ? "is-scrolled" : ""}`}>
         <div className="container topbar-inner">
           <a className="brand" href="#home">
-            <span className="brand-mark">EM</span>
+            <span className="brand-mark">
+              <img src="/media/logo.jpg" alt="" />
+            </span>
             <span className="brand-name">Emmanuel Magallanes</span>
           </a>
 
@@ -270,7 +285,14 @@ function App() {
 
       <main id="top" key={page}>
         {page === "home" ? (<>
-        <section className="container hero">
+        <section className="hero-wrap">
+        <div className="hero-bg" aria-hidden="true">
+          <span className="blob blob-a"></span>
+          <span className="blob blob-b"></span>
+          <span className="blob blob-c"></span>
+          <span className="hero-grid"></span>
+        </div>
+        <div className="container hero">
           <div className="hero-copy">
             <p className="greeting">{hero.greeting}</p>
             <h1>
@@ -278,6 +300,9 @@ function App() {
               <br />
               <span className="accent">{hero.headlineAccent}</span>
             </h1>
+            <p className="role-line">
+              I build <RotatingText words={heroRoles} />
+            </p>
             <p className="lead">{hero.lead}</p>
             <div className="btn-row">
               <a className="btn btn-primary" href="#contact">
@@ -295,13 +320,27 @@ function App() {
                 <span className="dot"></span>
                 Available for work
               </span>
-              <img
-                className="avatar"
-                src="/media/profile.jpg"
-                alt="Emmanuel Magallanes"
-              />
+              <div className="avatar-wrap">
+                <span className="avatar-ring" aria-hidden="true"></span>
+                <img
+                  className="avatar"
+                  src="/media/profile.jpg"
+                  alt="Emmanuel Magallanes"
+                />
+              </div>
+              <span className="float-chip chip-a" aria-hidden="true">
+                ⚛ React
+              </span>
+              <span className="float-chip chip-b" aria-hidden="true">
+                🐘 PHP · Laravel
+              </span>
+              <span className="float-chip chip-c" aria-hidden="true">
+                📱 React Native
+              </span>
               <p className="profile-name">Emmanuel L. Magallanes</p>
-              <p className="profile-role">Full-Stack Web &amp; Application Developer</p>
+              <p className="profile-role">
+                Full-Stack Developer · Web Systems &amp; Mobile Applications
+              </p>
               <a className="btn btn-primary btn-block" href={phoneHref}>
                 <PhoneIcon />
                 Tap to Call
@@ -322,6 +361,7 @@ function App() {
               </p>
             </div>
           </div>
+        </div>
         </section>
 
         <section className="container strip-wrap">
@@ -354,9 +394,9 @@ function App() {
               </a>
               <a
                 className="btn btn-ghost"
-                href="/documents/Emmanuel-Magallanes-Portfolio.pdf"
+                href="/documents/Emmanuel-Magallanes-Resume.pdf"
                 download>
-                Portfolio PDF
+                Download Resume
               </a>
             </div>
           </div>
@@ -387,7 +427,9 @@ function App() {
               <div className="stats">
                 {stats.map((stat) => (
                   <div key={stat.label}>
-                    <p className="stat-value">{stat.value}</p>
+                    <p className="stat-value">
+                      <Counter value={stat.value} />
+                    </p>
                     <p className="stat-label">{stat.label}</p>
                   </div>
                 ))}
@@ -400,8 +442,8 @@ function App() {
           <div className="container">
             <p className="kicker">What I Do</p>
             <h2>
-              Turning AI ideas into{" "}
-              <span className="accent">real systems.</span>
+              Building practical systems{" "}
+              <span className="accent">that last.</span>
             </h2>
             <div className="grid grid-2">
               {skillGroups.map((group) => (
@@ -447,17 +489,42 @@ function App() {
           </section>
         ) : null}
 
+        {education.length > 0 ? (
+          <section className="band">
+            <div className="container">
+              <p className="kicker">Education</p>
+              <h2>Where I studied.</h2>
+              <div className="grid grid-2">
+                {education.map((item, index) => (
+                  <article className="card" key={`${item.degree}-${index}`}>
+                    <p className="timeline-period">{item.period}</p>
+                    <h3>{item.degree}</h3>
+                    <p>{item.school}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
         <section className="container section tight">
           <p className="kicker">Tech I Use</p>
           <h2>Full-stack delivery, end to end.</h2>
-          <div className="pills">
-            {techStack.map((tech) => (
-              <span className="pill" key={tech}>
-                {tech}
-              </span>
-            ))}
-          </div>
         </section>
+        <div className="marquee" aria-label="Technologies">
+          {[0, 1].map((row) => (
+            <div
+              className={`marquee-track ${row ? "is-reverse" : ""}`}
+              key={row}
+              aria-hidden={row ? "true" : undefined}>
+              {[...techStack, ...techStack].map((tech, index) => (
+                <span className="pill" key={`${tech}-${index}`}>
+                  {tech}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
         </>) : null}
 
         {page === "projects" ? (<>
@@ -466,10 +533,17 @@ function App() {
           <h2>Recent work worth a look.</h2>
           <div className="grid grid-3">
             {projects.map((project) => (
-              <article className="card card-media" key={project.title}>
-                <img src={project.image} alt={project.title} />
-                <div className="card-body">
+              <article
+                className={`card ${project.image ? "card-media" : ""}`}
+                key={project.title}>
+                {project.image ? (
+                  <img src={project.image} alt={project.title} />
+                ) : null}
+                <div className={project.image ? "card-body" : undefined}>
                   <h3>{project.title}</h3>
+                  {project.tech ? (
+                    <p className="card-tech">{project.tech}</p>
+                  ) : null}
                   <p>{project.description}</p>
                 </div>
               </article>
@@ -486,9 +560,13 @@ function App() {
             <h2>Training and credentials.</h2>
             <div className="grid grid-3">
               {certificates.map((certificate) => (
-                <article className="card card-media" key={certificate.title}>
-                  <img src={certificate.image} alt={certificate.title} />
-                  <div className="card-body">
+                <article
+                  className={`card ${certificate.image ? "card-media" : ""}`}
+                  key={certificate.title}>
+                  {certificate.image ? (
+                    <img src={certificate.image} alt={certificate.title} />
+                  ) : null}
+                  <div className={certificate.image ? "card-body" : undefined}>
                     <h3>{certificate.title}</h3>
                     <p>{certificate.description}</p>
                   </div>
@@ -509,8 +587,23 @@ function App() {
               <article className="card" key={reference.name}>
                 <h3>{reference.name}</h3>
                 <p className="ref-role">{reference.role}</p>
-                <p className="ref-line">{reference.email}</p>
-                <p className="ref-line">{reference.phone}</p>
+                {reference.email ? (
+                  <p className="ref-line">{reference.email}</p>
+                ) : null}
+                {reference.phone ? (
+                  <p className="ref-line">{reference.phone}</p>
+                ) : null}
+                {reference.link ? (
+                  <p className="ref-line">
+                    <a
+                      className="ref-link"
+                      href={reference.link}
+                      target="_blank"
+                      rel="noreferrer">
+                      {reference.link.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+                    </a>
+                  </p>
+                ) : null}
               </article>
             ))}
           </div>
@@ -528,6 +621,9 @@ function App() {
                 For freelance work, company employment opportunities, team
                 projects, or project discussions, send a message here. Messages
                 are delivered to {contactEmail}.
+              </p>
+              <p className="body-text">
+                📍 La Salvacion, Carmen, Bohol, Philippines
               </p>
               <ul className="contact-links">
                 <li>
