@@ -102,6 +102,19 @@ export const defaultContent: Content = {
       ],
     },
     {
+      title: "Core Engineering",
+      skills: [
+        "Object-oriented programming with PHP (Laravel), Python, and JavaScript/TypeScript",
+        "Significant experience with JavaScript, CSS, and HTML",
+        "Building and consuming REST APIs",
+        "Design and implementation of object structures in relational databases (PostgreSQL, Supabase, MySQL)",
+        "Building applications with front-end frameworks such as React",
+        "Building and deploying software in the cloud (Vercel, Render, Supabase, Firebase)",
+        "Mobile app development with React Native",
+        "Ability to quickly learn and evaluate new technologies",
+      ],
+    },
+    {
       title: "Other Skills",
       skills: ["Project management", "Real estate and vehicle appraisal"],
     },
